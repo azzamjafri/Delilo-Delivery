@@ -188,35 +188,7 @@ class _LoginPageState extends State<LoginPage> {
             shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(25.0)),
                 onPressed: () => Navigator.push(context, new MaterialPageRoute(builder: (context) => HomeScreen())),
-            // onPressed: () async {
-            //   var user = await FirebaseAuth.instance.currentUser();
-            //   await Firestore.instance
-            //       .collection('delivery-users')
-            //       .document(user.uid)
-            //       .get()
-            //       .then((value) {
-            //     print(value.data['password'] + " : - Password of the user");
-            //     if (passwordController.text == value.data['password']) {
-            //       setState(() {
-            //         print(value.data['password'] + ' 8**********');
-            //         _password = value.data['password'];
-            //         canLogin = true;
-            //       });
-            //     }
-            //   });
-            //   canLogin
-            //       ? Navigator.push(context,
-            //           MaterialPageRoute(builder: (context) => HomeScreen()))
-            //       : key.currentState.showSnackBar(
-            //           SnackBar(content: Text('Something went wrong !')));
-            //   print('**********************' + _password);
-            //   if (_password == passwordController.text)
-            //     Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context) => HomeScreen()), (route) => false);
-            //   else
-            //     key.currentState.showSnackBar(
-            //         SnackBar(content: Text('Something went wrong !')));
-            //   // Navigator.push(context,MaterialPageRoute(builder: (context) => HomeScreen()));
-            // },
+           
             minWidth: MediaQuery.of(context).size.width / 1.35,
             color: Colors.green,
             child: Text("Login",
@@ -229,7 +201,7 @@ class _LoginPageState extends State<LoginPage> {
           SizedBox(
             height: 45.0,
           ),
-          // getRegisterRow(),
+          getRegisterRow(),
         ],
       ),
     );
@@ -239,53 +211,22 @@ class _LoginPageState extends State<LoginPage> {
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        new Text('Don\'t have an account ? ',
+        new Text('Don\'t have an Id yet ? ',
             style: TextStyle(fontWeight: FontWeight.bold,
-                color: Colors.white)),
+                color: Colors.black)),
         GestureDetector(
           onTap: () {
-            Navigator.push(context,
-                MaterialPageRoute(builder: (context) => RegistrationScreen()));
+            Navigator.push(context,MaterialPageRoute(builder: (context) => RegistrationScreen()));
           },
           child:
-              Text('Register', style: TextStyle(fontWeight: FontWeight.bold,
-              color: Colors.white)),
+              Text('Request ID', style: TextStyle(fontWeight: FontWeight.bold,
+              color: Colors.green)),
         )
       ],
     );
   }
 
   getVerified() async {
-    // Firestore.instance.collection('users').getDocuments().then((doc) {
-    //   doc.documents.forEach((element) {
-    //     print(element.data['phone'] + "****************" + idController.text);
-    //     print(idController.text.compareTo(element.data['phone']));
-    //     if(idController.text.compareTo(element.data['phone']) == 0){
 
-    //       if(passwordController.text.compareTo(element.data['password']) == 0){
-    //         Navigator.pushAndRemoveUntil(context, new MaterialPageRoute(builder: (context) => HomeScreen()), (route) => false);
-    //       }else{
-    //         key.currentState.showSnackBar(SnackBar(content: Text('Invalid password'),));
-    //       }
-
-    //     }
-    //   });
-    // });
-
-    var user = await FirebaseAuth.instance.currentUser();
-    await Firestore.instance
-        .collection('delivery-users')
-        .document(user.uid)
-        .get()
-        .then((value) {
-      print(value.data['password'] + " : - Password of the user");
-      if (passwordController.text == value.data['password']) {
-        setState(() {
-          print(value.data['password'] + ' 8**********');
-          _password = value.data['password'];
-          canLogin = true;
-        });
-      }
-    });
   }
 }

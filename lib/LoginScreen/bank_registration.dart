@@ -1,14 +1,18 @@
 import 'dart:async';
+import 'dart:io';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:delilo/LoginScreen/login.dart';
+import 'package:file_picker/file_picker.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:pin_code_fields/pin_code_fields.dart';
 
 
 import '../colors.dart';
+import 'registration.dart';
 
 
 String otp;
@@ -20,20 +24,10 @@ class BankRegistrationScreen extends StatefulWidget {
 
 class _BankRegistrationScreenState extends State<BankRegistrationScreen> {
   final key = GlobalKey<ScaffoldState>();
-  final nameController = new TextEditingController();
-  final emailController = new TextEditingController();
-  final passwordController = new TextEditingController();
-  final mobileController = new TextEditingController();
-  final otpController = new TextEditingController();
-  // final textEditingController = new TextEditingController();
-  // StreamController<ErrorAnimationType> errorController = StreamController<ErrorAnimationType>();
+  final accountNameController = new TextEditingController();
+  final ifscController = new TextEditingController();
+  
 
-  // @override
-  // void dispose() {
-  //   errorController.close();
-
-  //   super.dispose();
-  // }
   
 
   
@@ -52,7 +46,11 @@ class _BankRegistrationScreenState extends State<BankRegistrationScreen> {
   final OTPVerifiedSnackBar = SnackBar(
     content: Text("Phone Number Verified!"),
   );
+
   AuthCredential loginKey;
+  var driving_licence;
+  var pan_card;
+  var passport;
 
   final _formKey = GlobalKey<FormState>();
 
@@ -134,7 +132,7 @@ class _BankRegistrationScreenState extends State<BankRegistrationScreen> {
                                 hintStyle:
                                     TextStyle(fontSize: height * 0.023),
                                 border: InputBorder.none),
-                            controller: nameController,
+                            controller: accountNameController,
                             validator: (val) => val.isEmpty
                                 ? 'Name can not be empty'
                                 : null,
@@ -171,7 +169,7 @@ class _BankRegistrationScreenState extends State<BankRegistrationScreen> {
                             hintStyle:
                                 TextStyle(fontSize: height * 0.023),
                             border: InputBorder.none),
-                        controller: emailController,
+                        controller: ifscController,
                         validator: (val) =>
                             val.isEmpty ? 'Enter an email' : null,
                       )),
@@ -181,14 +179,16 @@ class _BankRegistrationScreenState extends State<BankRegistrationScreen> {
           SizedBox(
             height: height * 0.01,
           ),
-          
+
           
           
          
           Padding(
             padding: const EdgeInsets.all(10),
             child: GestureDetector(
-              onTap: (){},
+              onTap: ()  {
+                driving_licence = uploadDoc('driving_licence');
+              },
               child: Container(
                   width: MediaQuery.of(context).size.width * 0.8,
                   height: MediaQuery.of(context).size.height * 0.06,
@@ -232,7 +232,9 @@ class _BankRegistrationScreenState extends State<BankRegistrationScreen> {
           Padding(
             padding: const EdgeInsets.all(10),
             child: GestureDetector(
-              onTap: (){},
+              onTap: () {
+                pan_card =  uploadDoc('pan_card');
+              },
               child: Container(
                   width: MediaQuery.of(context).size.width * 0.8,
                   height: MediaQuery.of(context).size.height * 0.06,
@@ -276,7 +278,9 @@ class _BankRegistrationScreenState extends State<BankRegistrationScreen> {
           Padding(
             padding: const EdgeInsets.all(10),
             child: GestureDetector(
-              onTap: (){},
+              onTap: () {
+                passport = uploadDoc('passport_photo');
+              } ,
               child: Container(
                   width: MediaQuery.of(context).size.width * 0.8,
                   height: MediaQuery.of(context).size.height * 0.06,
@@ -318,9 +322,7 @@ class _BankRegistrationScreenState extends State<BankRegistrationScreen> {
               MaterialButton(
             shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(35.0)),
-            onPressed: () async {
-             
-            },
+            onPressed: () {},
             minWidth: MediaQuery.of(context).size.width / 3,
             color: Colors.white,
             child: Text("Cancel Check",
@@ -331,9 +333,7 @@ class _BankRegistrationScreenState extends State<BankRegistrationScreen> {
           MaterialButton(
             shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(35.0)),
-            onPressed: () async {
-              
-            },
+            onPressed: () {},
             minWidth: MediaQuery.of(context).size.width / 3,
             color: greenColor,
             child: Text("Cancel",
@@ -348,47 +348,28 @@ class _BankRegistrationScreenState extends State<BankRegistrationScreen> {
           MaterialButton(
             shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(35.0)),
-            onPressed: () {
-              Navigator.push(context, new MaterialPageRoute(builder: (context) => LoginPage()));
+            onPressed: () async {
+              // print(user.uid + ' ********************************************');
+              try{
+                await Firestore.instance.collection('users').document(user.uid).updateData({
+                'account_name': accountNameController.text,
+                'ifsc': ifscController.text,
+                'driving_licence': driving_licence,
+                'pan_card': pan_card,
+                'passport_photo': passport,
+              }).then((value) => Navigator.pushAndRemoveUntil(context, new MaterialPageRoute(builder: (context) => LoginPage()), (route) => false));
+              }catch(error) {
+                print(error.toString() + ' &&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&');
+              }
+              Navigator.pushAndRemoveUntil(context, new MaterialPageRoute(builder: (context) => LoginPage()), (route) => false);
+              
             },
             minWidth: MediaQuery.of(context).size.width / 1.35,
             color: greenColor,
             child: Text("Request",style: TextStyle(color: Colors.white, fontSize: height * 0.04)),
             height: height * 0.08,
           ),
-          /* Padding(
-            padding: const EdgeInsets.only(left: 30.0),
-            child: CheckboxListTile(
-              value: privacyCheck,
-              onChanged: (newValue) {
-                setState(() {
-                  privacyCheck = newValue;
-                });
-              },
-              title: Text('I Agree all Terms & Policies',
-                  style: TextStyle(fontSize: 12.5, color: Colors.white)),
-              controlAffinity: ListTileControlAffinity.leading,
-              checkColor: Colors.white,
-              activeColor: Colors.blueGrey,
-            ),
-          ),
-          Padding(
-            padding: const EdgeInsets.only(left: 30.0),
-            child: CheckboxListTile(
-              value: drinkingCheck,
-              onChanged: (newValue) {
-                setState(() {
-                  drinkingCheck = newValue;
-                });
-              },
-              title: Text(
-                  'I Agree that I have legal drinking age\nas per state domocile',
-                  style: TextStyle(fontSize: 12.5, color: Colors.white)),
-              controlAffinity: ListTileControlAffinity.leading,
-              checkColor: Colors.white,
-              activeColor: Colors.blueGrey,
-            ),
-          ), */
+   
           SizedBox(
             height: height * 0.02,
           ),
@@ -398,45 +379,18 @@ class _BankRegistrationScreenState extends State<BankRegistrationScreen> {
       ),
     );
   }
-
-
-}
-
-// ignore: camel_case_types
-class otpField extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    double width = MediaQuery.of(context).size.width;
-    double height = MediaQuery.of(context).size.height;
-    return Container(
-      margin: EdgeInsets.only(left: width * 0.0375),
-      height: height * 0.04,
-      width: width * 0.075,
-      child: Container(
-          alignment: Alignment.bottomCenter,
-          child: TextField(
-            decoration:
-                InputDecoration(counterText: '', border: InputBorder.none),
-            textAlign: TextAlign.center,
-            keyboardType: TextInputType.number,
-            maxLength: 1,
-            maxLengthEnforced: true,
-            onChanged: (value) {
-              otp = otp + value.toString();
-              print(otp);
-            },
-          )),
-      decoration: BoxDecoration(
-        shape: BoxShape.circle,
-        color: Colors.white,
-        boxShadow: [
-          BoxShadow(
-            color: Colors.grey,
-            blurRadius: 2,
-            offset: Offset(0, 2),
-          ),
-        ],
-      ),
-    );
+  uploadDoc(service) async {
+    
+    File file = await FilePicker.getFile();
+    
+    StorageReference storageReference = FirebaseStorage.instance.ref().child(service).child(user.uid);
+    StorageUploadTask uploadTask = storageReference.putFile(file);
+    await uploadTask.onComplete;
+    return await storageReference.getDownloadURL();
+    // url = await storageReference.getDownloadURL();
+    // print('File Uploaded !' + url);
+    
   }
+
 }
+

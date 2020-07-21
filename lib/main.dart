@@ -23,8 +23,8 @@ class MyApp extends StatelessWidget {
         visualDensity: VisualDensity.adaptivePlatformDensity,
 
       ),
-      // home: AuthService().handleAuth(),
-      home: RegistrationScreen(),
+      home: AuthService().handleAuth(),
+      // home: RegistrationScreen(),
       
     );
   }

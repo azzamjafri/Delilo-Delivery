@@ -118,7 +118,7 @@ class _ActiveOrderCashOnDeliveryState extends State<ActiveOrderCashOnDelivery> {
                     Align(
                       alignment: Alignment.center,
                       child: Container(
-                          width: x * 0.09,
+                          width: x * 0.099,
                           child: Text(
                             'Total',
                             style: TextStyle(fontSize: y * 0.02),

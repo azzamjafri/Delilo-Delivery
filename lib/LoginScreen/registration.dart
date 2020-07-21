@@ -1,17 +1,20 @@
 import 'dart:async';
+import 'dart:io';
 
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:delilo/Authentication/authentication.dart';
 import 'package:delilo/LoginScreen/bank_registration.dart';
+import 'package:file_picker/file_picker.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:pin_code_fields/pin_code_fields.dart';
 
-
 import '../colors.dart';
-import 'login.dart';
 
 String otp;
+FirebaseUser user;
 
 class RegistrationScreen extends StatefulWidget {
   @override
@@ -25,35 +28,23 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
   final passwordController = new TextEditingController();
   final mobileController = new TextEditingController();
   final otpController = new TextEditingController();
-  // final textEditingController = new TextEditingController();
-  // StreamController<ErrorAnimationType> errorController = StreamController<ErrorAnimationType>();
-
-  // @override
-  // void dispose() {
-  //   errorController.close();
-
-  //   super.dispose();
-  // }
+  final addressController = new TextEditingController();
   
 
-  
   bool privacyCheck = false;
   bool drinkingCheck = false;
   bool canRegister = false;
+  int stat = 0;
 
   // Registration variables
   String smsCode, verificationId;
   bool codeSent = false;
   bool verified = false;
   bool registered = false;
-  final OTPSnackBar = SnackBar(
-    content: Text("OTP Sent !"),
-  );
-  final OTPVerifiedSnackBar = SnackBar(
-    content: Text("Phone Number Verified!"),
-  );
-  AuthCredential loginKey;
 
+  AuthCredential loginKey;
+  File file;
+  String url;
   final _formKey = GlobalKey<FormState>();
 
   @override
@@ -239,44 +230,41 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
           SizedBox(
             height: height * 0.01,
           ),
-           Row(
-             mainAxisAlignment: MainAxisAlignment.center,
-             children: [
-               RichText(
-                    text: TextSpan(
-                  text: 'OTP Recievied',
-                  style: TextStyle(
-                      color: Colors.grey,
-                      fontWeight: FontWeight.normal,
-                      fontSize: height * 0.023),
-                )),
-                SizedBox(
-                  width: width*0.1,
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              RichText(
+                  text: TextSpan(
+                text: 'OTP Recievied',
+                style: TextStyle(
+                    color: Colors.grey,
+                    fontWeight: FontWeight.normal,
+                    fontSize: height * 0.018),
+              )),
+              SizedBox(width: 2.0,),
+              SizedBox(
+                width: width * 0.7,
+                height: 45.0,
+                child: PinCodeTextField(
+                  backgroundColor: Colors.grey[200],
+                  pinTheme: PinTheme(
+                    shape: PinCodeFieldShape.circle,
+                    borderRadius: BorderRadius.all(Radius.circular(10.0)),
+                    inactiveFillColor: brownColor,
+                    activeColor: greenColor,
+                    selectedColor: greenColor,
+                    activeFillColor: greenColor,
+                    inactiveColor: brownColor,
+                  ),
+                  length: 6,
+                  onChanged: (val) {
+                    otp = val;
+                  },
                 ),
-               SizedBox(
-                      width: width*0.5,
-                      height: 50.0,
-                      child: PinCodeTextField(
-                        
-                        backgroundColor: Colors.grey[200],
-                          pinTheme: PinTheme(
-                            shape: PinCodeFieldShape.circle,
-                            borderRadius: BorderRadius.all(Radius.circular(10.0)),
-                            inactiveFillColor: brownColor,
-                            activeColor: greenColor,
-                            selectedColor: greenColor,
-                            activeFillColor: greenColor,
-                            inactiveColor: brownColor,
-                          ),
-                          length: 4,
-                          onChanged: (val) {
-                            otp = val;
-                          },
-                        ),
-                    ),
-             ],
-           ),
-          
+              ),
+            ],
+          ),
+
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: <Widget>[
@@ -285,53 +273,25 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
               ),
               FlatButton(
                   onPressed: () {
-                    // mobileController.text = mobileController.text.trim();
-                    // codeSent
-                    //     ? AuthService().signWithOTP(smsCode, verificationId)
-                    //     : verifyPhone("+91" + mobileController.text);
+                    mobileController.text = mobileController.text.trim();
+                    codeSent
+                        ? AuthService().signWithOTP(smsCode, verificationId)
+                        : verifyPhone("+91" + mobileController.text);
 
-                    // if (verified) {
-                    //   setState(() {
-                    //     key.currentState.showSnackBar(OTPVerifiedSnackBar);
-                    //   });
-                    // }
+                    if (verified) {
+                      setState(() {
+                        key.currentState.showSnackBar(SnackBar(content: Text('Phone Number Verified !'),));
+                      });
+                    }
                   },
                   child: codeSent
                       ? Text("Submit the OTP Code",
                           style: TextStyle(color: Colors.green))
-                      : Text("Resend OTP",
+                      : Text("Get OTP",
                           style: TextStyle(color: Colors.green))),
             ],
           ),
-          // Padding(
-          //   padding: const EdgeInsets.only(left: 10, right: 10, bottom: 10),
-          //   child: Container(
-          //       width: MediaQuery.of(context).size.width * 0.8,
-          //       height: MediaQuery.of(context).size.height * 0.05,
-          //       decoration: BoxDecoration(
-          //         color: Colors.white,
-          //         borderRadius: BorderRadius.circular(50),
-          //         boxShadow: [
-          //           BoxShadow(
-          //             color: Colors.grey,
-          //             blurRadius: 2,
-          //             offset: Offset(0, 2),
-          //           ),
-          //         ],
-          //       ),
-          //       child: Container(
-          //         padding: EdgeInsets.only(
-          //             left: MediaQuery.of(context).size.width * 0.08),
-          //         child: Center(
-          //           child: TextFormField(
-          //             decoration: InputDecoration(
-          //                 hintText: 'Enter your Display Name',
-          //                 hintStyle: TextStyle(fontSize: height * 0.023),
-          //                 border: InputBorder.none),
-          //           ),
-          //         ),
-          //       )),
-          // ),
+
           Padding(
             padding: const EdgeInsets.all(10),
             child: Container(
@@ -357,14 +317,16 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                       Row(
                         children: <Widget>[
                           IconButton(
-                              // icon: Icon(Icons.location_on),
-                              icon: Image.asset('assets/pppp.png', color: Colors.grey),
+                              
+                              icon: Image.asset('assets/pppp.png',
+                                  color: Colors.grey),
                               iconSize: height * 0.06,
                               onPressed: null),
                           Expanded(
                               child: Container(
                                   margin: EdgeInsets.only(right: 20, left: 0),
                                   child: TextFormField(
+                                    controller: addressController,
                                     decoration: InputDecoration(
                                         hintText: 'Address',
                                         hintStyle:
@@ -380,7 +342,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
           Padding(
             padding: const EdgeInsets.all(10),
             child: GestureDetector(
-              onTap: (){},
+              onTap: () => uploadId(),
               child: Container(
                   width: MediaQuery.of(context).size.width * 0.8,
                   height: MediaQuery.of(context).size.height * 0.06,
@@ -400,16 +362,16 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                         left: MediaQuery.of(context).size.width * 0.04),
                     child: Row(
                       children: <Widget>[
-                        
                         Container(
                             margin: EdgeInsets.only(right: 80, left: 40),
-                            child: Text('Id proof', style: TextStyle(color: Colors.grey.shade700, fontSize: 16.0))
-                            ),
-
-                                IconButton(
-                            icon: Image.asset('assets/sh.png', color: Colors.grey),
+                            child: Text('Id proof',
+                                style: TextStyle(
+                                    color: Colors.grey.shade700,
+                                    fontSize: 16.0))),
+                        IconButton(
+                            icon: Image.asset('assets/sh.png',
+                                color: Colors.grey),
                             iconSize: height * 0.1,
-                            
                             onPressed: null),
                       ],
                     ),
@@ -425,53 +387,30 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
             onPressed: () async {
               await verifyPhone("+91" + mobileController.text);
               Navigator.push(context, new MaterialPageRoute(builder: (context) => BankRegistrationScreen()));
-              if (canRegister == true) {
-                // Navigator.push(context,MaterialPageRoute(builder: (context) => Details()));
+              if(stat == 0 || stat == 1) key.currentState.showSnackBar(SnackBar(content: Text('Please Upload Id Proof '),));
+              else{
+                if (canRegister == true) {
+                   Navigator.push(context,MaterialPageRoute(builder: (context) => BankRegistrationScreen()));
+                }else{
+                  key.currentState.showSnackBar(SnackBar(content: Text('Something went wrong !'),));
+                }
               }
+              
             },
             minWidth: MediaQuery.of(context).size.width / 1.35,
             color: greenColor,
-            child: Text("Continue",
-                style: TextStyle(color: Colors.white, fontSize: height * 0.04)),
+            
+            child: Text( (stat == 1) ? "Uploading File.." : "Continue"
+              ,
+            style: TextStyle(color: Colors.white, fontSize: (stat == 1) ? height * 0.03 : height * 0.04)
+            ),
             height: height * 0.08,
           ),
-          /* Padding(
-            padding: const EdgeInsets.only(left: 30.0),
-            child: CheckboxListTile(
-              value: privacyCheck,
-              onChanged: (newValue) {
-                setState(() {
-                  privacyCheck = newValue;
-                });
-              },
-              title: Text('I Agree all Terms & Policies',
-                  style: TextStyle(fontSize: 12.5, color: Colors.white)),
-              controlAffinity: ListTileControlAffinity.leading,
-              checkColor: Colors.white,
-              activeColor: Colors.blueGrey,
-            ),
-          ),
-          Padding(
-            padding: const EdgeInsets.only(left: 30.0),
-            child: CheckboxListTile(
-              value: drinkingCheck,
-              onChanged: (newValue) {
-                setState(() {
-                  drinkingCheck = newValue;
-                });
-              },
-              title: Text(
-                  'I Agree that I have legal drinking age\nas per state domocile',
-                  style: TextStyle(fontSize: 12.5, color: Colors.white)),
-              controlAffinity: ListTileControlAffinity.leading,
-              checkColor: Colors.white,
-              activeColor: Colors.blueGrey,
-            ),
-          ), */
+          
           SizedBox(
             height: height * 0.02,
           ),
-          
+
           Padding(padding: EdgeInsets.all(15.0)),
         ],
       ),
@@ -482,23 +421,27 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
     final PhoneVerificationCompleted verified =
         (AuthCredential authResult) async {
       // AuthService().signIn(authResult);
-      FirebaseAuth.instance.signInWithCredential(authResult).then((user) async {
+      FirebaseAuth.instance.signInWithCredential(authResult).then((usser) async {
         if (emailController != null &&
             mobileController != null &&
             nameController != null &&
             passwordController != null) {
           canRegister = true;
         }
-        await FirebaseAuth.instance.currentUser();
+        await FirebaseAuth.instance.currentUser().then((value) {
+          user = value;
+        });
         await Firestore.instance
             .collection('users')
-            .document(user.user.uid)
+            .document(usser.user.uid)
             .setData({
-          "email": emailController.text,
-          "password": passwordController.text,
-          "phone": mobileController.text,
-          "username": nameController.text,
-        });
+              "email": emailController.text,
+              "phone": mobileController.text,
+              "username": nameController.text,
+              'address': addressController.text,
+              "id_proof": url,
+              "id": mobileController.text,
+         });
       });
       setState(() async {
         this.verified = true;
@@ -509,7 +452,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
 
     final PhoneVerificationFailed verificationfailed =
         (AuthException authException) {
-      print('${authException.message}');
+      print('${authException.message}'  + '***************************************');
 
       if (registered)
         key.currentState.showSnackBar(SnackBar(
@@ -538,7 +481,22 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
         codeSent: smsSent,
         codeAutoRetrievalTimeout: autoTimeout);
   }
+    uploadId() async {
+    
+    file = await FilePicker.getFile();
+    setState(() {
+      stat = (file == null) ? 0 : 1;
+    });
+    StorageReference storageReference = FirebaseStorage.instance.ref().child('user_id_proof').child(user.uid);
+    StorageUploadTask uploadTask = storageReference.putFile(file);
+    await uploadTask.onComplete;
+    url = await storageReference.getDownloadURL();
+    print('File Uploaded !' + url);
+    setState(() {stat = 3;});
+  } 
 }
+
+ 
 
 // ignore: camel_case_types
 class otpField extends StatelessWidget {

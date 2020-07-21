@@ -82,7 +82,7 @@ class _ProfilePageState extends State<ProfilePage> {
         Padding(
           padding: EdgeInsets.symmetric(vertical: y * 0.0108, horizontal: x * 0.090),
           child: SizedBox(
-            height: y / 2.75,
+            height: y / 2.18,
             width: x,
             child: Card(
               elevation: 0.0,
