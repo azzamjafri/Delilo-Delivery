@@ -6,74 +6,81 @@ import "package:flutter/material.dart";
 
 import '../colors.dart';
 
-
 class HomeScreen extends StatefulWidget {
   @override
   _HomeScreenState createState() => _HomeScreenState();
 }
 
-class _HomeScreenState extends State<HomeScreen>with SingleTickerProviderStateMixin{
-
+class _HomeScreenState extends State<HomeScreen>
+    with SingleTickerProviderStateMixin {
   TabController tabController;
   @override
   void initState() {
-    tabController=TabController(length: 4,vsync: this);
+    tabController = TabController(length: 4, vsync: this);
     super.initState();
   }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: getBody(),
+      bottomNavigationBar: getTabs(),
     );
   }
 
   getBody() {
     return SafeArea(
-      child: Row(
-        children: [
-          Container(
-            color: blueColor,
-            width: 50,
-            child: RotatedBox(
-              quarterTurns: 3,
-              child: TabBar(
-                indicatorSize: TabBarIndicatorSize.tab,
-                indicatorWeight: 4,
-                indicatorColor: brownColor,
-                labelColor: brownColor,
-                unselectedLabelColor: Colors.white,
-                // physics: NeverScrollableScrollPhysics(),
-                controller: tabController,
-                tabs: [
-                  Tab(
-                    icon: Text("Order")
-                  ),
-                  Tab(
-                    icon: Text("Payout"),
-                  ),
-                  Tab(
+      child: Expanded(
+        child: TabBarView(
+          physics: NeverScrollableScrollPhysics(),
+          controller: tabController,
+          children: [
+            OrderPage(),
+            Payout(),
+            Payin(),
+            ProfilePage(),
+          ],
+        ),
+      ),
+    );
+  }
 
-                    icon: Text("Payin"),
-                  ),
-                  Tab(
-                    icon: Text("Profile"),
-                  ),
-                ],
-              ),
-            )
+  getTabs() {
+    return Container(
+      decoration: BoxDecoration(
+        color: Colors.white,
+        boxShadow: <BoxShadow>[
+          BoxShadow(
+            color: Colors.grey,
+            offset: Offset(0.0, -4.0), //(x,y)
+            blurRadius: 6.0,
           ),
-          Expanded(
-            child: TabBarView(
-              physics: NeverScrollableScrollPhysics(),
-              controller: tabController,
-              children: [
-                OrderPage(),
-                Payout(),
-                Payin(),
-                ProfilePage(),
-              ],
-            ),
-          )
+        ],
+      ),
+      child: TabBar(
+        indicatorSize: TabBarIndicatorSize.tab,
+        indicatorWeight: 4,
+        indicatorColor: greenColor,
+        labelColor: greenColor,
+        unselectedLabelColor: Colors.black,
+        
+        indicator: UnderlineTabIndicator(
+          borderSide: BorderSide(color: greenColor, width: 6.0),
+          insets: EdgeInsets.fromLTRB(5.0, 0.0, 5.0, 45.0),
+        ),
+        // physics: NeverScrollableScrollPhysics(),
+        controller: tabController,
+        tabs: [
+          Tab(icon: Text("Order")),
+          Tab(
+            icon: Text("Payout"),
+          ),
+          Tab(
+            icon: Text("Payin"),
+          ),
+          Tab(
+            icon: Text("Profile"),
+          ),
         ],
       ),
     );

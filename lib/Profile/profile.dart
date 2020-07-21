@@ -1,19 +1,6 @@
-
-
-import 'package:delilo/Profile/privacy_policy.dart';
-import 'package:delilo/Profile/rate_us.dart';
-import 'package:delilo/Profile/settings.dart';
-import 'package:delilo/Profile/share.dart';
 import 'package:flutter/material.dart';
 
-
-
 import '../colors.dart';
-import 'contact_us.dart';
-import 'edit_email.dart';
-import 'edit_name.dart';
-import 'edit_phone_number.dart';
-import 'notifications.dart';
 
 
 class ProfilePage extends StatefulWidget {
@@ -22,11 +9,10 @@ class ProfilePage extends StatefulWidget {
 }
 
 class _ProfilePageState extends State<ProfilePage> {
-
   @override
   Widget build(BuildContext context) {
-
-    return Scaffold(
+    return new Scaffold(
+      backgroundColor: Colors.grey[200],
       body: getBody(),
     );
   }
@@ -34,119 +20,115 @@ class _ProfilePageState extends State<ProfilePage> {
   getBody() {
     double y = MediaQuery.of(context).size.height;
     double x = MediaQuery.of(context).size.width;
-    return Stack(
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.start,
       children: [
-        Container(
-          height: y,
-          width: x,
-          child: Image.asset("assets/d.png",fit: BoxFit.fill,),
+        
+        Padding(
+          padding: EdgeInsets.only(top: y * 0.026),
         ),
-        Align(
-          alignment: Alignment(0,-.6),
-          
-          child: Column(
-            children: [
-              SizedBox(height:  y * 0.013),
-              Padding(
-                padding: EdgeInsets.symmetric(vertical: y * 0.0108, horizontal: x * 0.0203),
-                child: Container(
-                  width: x*0.3,
-                  height: y*0.1,
-                  child: Image.asset('assets/ok.png'),
-                ),
-              ),
-              Padding(
-                padding: EdgeInsets.all(0.0),
-                child: Text('Welcome to Rtiggers', style: TextStyle(color: Colors.white, fontSize: y*0.03),),
-              ),
-               Padding(
-                 padding: EdgeInsets.symmetric(vertical: y * 0.003, horizontal: x * 0.005),
-                 child: MaterialButton(
-                   shape: RoundedRectangleBorder(
-                     borderRadius: BorderRadius.circular(6)
-                   ),
-                   color: brownColor,
-                   child: Text("Login",style: TextStyle(color: Colors.white),),
-                   onPressed: (){
-                     // AuthService().signOut();
-                   },
+        
+        // Padding(
+        
+        
 
-                 ),
-               ),
-            ],
+        Padding(
+          padding: const EdgeInsets.only(top: 5.0),
+        ),
+        Padding(
+          padding: EdgeInsets.symmetric(vertical: y * 0.0108, horizontal: x * 0.090),
+          child: SizedBox(
+            height: y / 3.5,
+            width: x,
+            child: Card(
+              elevation: 0.0,
+              shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(10.0)),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Padding(padding: EdgeInsets.symmetric(vertical: y * 0.013, horizontal: x * 0.025)),
+
+                  Center(
+                    child: Container(
+                        height: 80.0,
+                        width: 80.0,
+                        child: Image.asset('assets/1.png',)
+                      ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.only(left: 40.0, bottom: 5.0),
+                    child: blueText('Brianna Hansen'),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.only(left: 40.0, bottom: 5.0),
+                    child: Text('(+91) 1111 1111 11',
+                      style: TextStyle(fontSize: y*0.017),),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.only(left: 40.0, bottom: 5.0),
+                    child: Text('Bhasen@gmail.com',
+                      style: TextStyle(fontSize: y*0.017),),
+                  ),
+                  
+                ],
+              ),
+            ),
           ),
         ),
-        Align(
-          alignment: Alignment(0,1),
-          child: getList(),
-        )
+
+        Align(alignment: Alignment.centerLeft , child: Padding(padding: EdgeInsets.only(left: 40.0, top: 10.0), child: blueText('Address'),),),
+        Padding(
+          padding: EdgeInsets.symmetric(vertical: y * 0.0108, horizontal: x * 0.090),
+          child: SizedBox(
+            height: y / 2.75,
+            width: x,
+            child: Card(
+              elevation: 0.0,
+              shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(10.0)),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Padding(padding: EdgeInsets.symmetric(vertical: y * 0.013, horizontal: x * 0.025)),
+
+                 
+                  
+                  Padding(
+                    padding: const EdgeInsets.only(left: 40.0, bottom: 5.0, right: 40.0),
+                    child: Text('Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.',
+                      style: TextStyle(fontSize: y*0.017),),
+                  ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    children: [
+                      Container(
+                          height: 50.0,
+                          width: 50.0,
+                          child: Image.asset('assets/dello14.png',)
+                        ),
+                    ],
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ),
+
       ],
     );
   }
 
-  getList() {
-    double y = MediaQuery.of(context).size.height;
-    double x = MediaQuery.of(context).size.width;
-    return Padding(
-        padding: EdgeInsets.symmetric(vertical: y * 0.0108, horizontal: x * 0.0203),
-      child: SizedBox(
-        width: x,
-        height: y/1.47,
-        child: ListView(
-          children: [
-            Divider(thickness: 0.5),
-            profilelistbutton(height: y, width: x,label: 'Name',tileno: 1,onPress: (){Navigator.push(context, MaterialPageRoute(builder: (context) => EditName()));
-            }, ),
-            Divider(thickness: 0.5),
-            profilelistbutton(height: y, width: x,label: 'Mobile Number',tileno: 2,onPress: (){Navigator.push(context, MaterialPageRoute(builder: (context) => EditPhoneNumber()));
-            }, ),
-            Divider(thickness: 0.5),
-            profilelistbutton(height: y, width: x,label: 'Email id',tileno: 3,onPress: (){Navigator.push(context, MaterialPageRoute(builder: (context) => EditEmail()));
-            }, ),
-            Divider(thickness: 0.5),
-            profilelistbutton(height: y, width: x,label: 'Settings',tileno: 4,onPress: (){Navigator.push(context, MaterialPageRoute(builder: (context) => Settings()));
-            }, ),
-            Divider(thickness: 0.5),
-            profilelistbutton(height: y, width: x,label: 'Rate Us',tileno: 5,onPress: (){Navigator.push(context, MaterialPageRoute(builder: (context) => RateUs()));
-            }, ),
-            Divider(thickness: 0.5),
-            profilelistbutton(height: y, width: x,label: 'Share your friends',tileno: 6,onPress: (){Navigator.push(context, MaterialPageRoute(builder: (context) => Share()));
-            }, ),
-            Divider(thickness: 0.5),
-            profilelistbutton(height: y, width: x,label: 'Privacy Policy',tileno: 7,onPress: (){Navigator.push(context, MaterialPageRoute(builder: (context) => PrivacyPolicy()));
-            }, ),
-            Divider(thickness: 0.5),
-            profilelistbutton(height: y, width: x,label: 'Notifications',tileno: 8,onPress: (){Navigator.push(context, MaterialPageRoute(builder: (context) => Notifications()));
-            }, ),
-            Divider(thickness: 0.5),
-            profilelistbutton(height: y, width: x,label: 'Contact Us',tileno: 9,onPress: (){Navigator.push(context, MaterialPageRoute(builder: (context) => ContactUs()));
-            }, ),
-            Divider(thickness: 0.5),
-          ],
-        ),
-      ),
-    );
-  }
-}
-
-class profilelistbutton extends StatelessWidget {
-  const profilelistbutton({ @required this.height, @required this.width,@required this.label,@required this.tileno,@required this.onPress});
-
-  final double height;
-  final double width;
-  final String label;
-  final int tileno;
-  final Function onPress;
-
-  @override
-  Widget build(BuildContext context) {
-    return FlatButton(
-      onPressed: onPress,
-      child: ListTile(
-        leading: Image.asset("assets/$tileno.png",height: height*0.06,width: width*0.2,),
-        title: Text(label),
-        trailing: Image.asset("assets/b.png",height: height*0.04,width: width*0.07),
-      ),
+  blueText(String txt, [double size = 22.0]) {
+    return new Text(
+      txt,
+      style: new TextStyle(
+          color: greenColor,
+          fontSize: size,
+          // fontWeight: FontWeight.bold,
+          letterSpacing: 0.8),
     );
   }
 }

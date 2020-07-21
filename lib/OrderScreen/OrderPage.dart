@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:delilo/OrderScreen/ActiveOrders.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -17,18 +18,21 @@ class OrderPage extends StatefulWidget {
 class _OrderPageState extends State<OrderPage> with SingleTickerProviderStateMixin{
   TabController tabView;
   String name = "";
+
   @override
   void initState() {
     tabView=TabController(length: 3,vsync: this,initialIndex: 1);
     getName();
     super.initState();
   }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.white,
-        title: Text("Welcome $name",style: TextStyle(color: blueColor),),
+        centerTitle: false,
+        title: Text("Welcome $name",style: TextStyle(color: greenColor),),
         elevation: 0,
         bottom: getTabBar(),
       ),
@@ -39,9 +43,11 @@ class _OrderPageState extends State<OrderPage> with SingleTickerProviderStateMix
 
   getTabBar() {
     return TabBar(
+      
       indicator: BoxDecoration(
+        
         borderRadius: BorderRadius.circular(100),
-        color: Colors.blue[100]
+        color: Colors.green[100]
       ),
       //indicatorColor: Colors.black,
       controller: tabView,
@@ -65,13 +71,14 @@ class _OrderPageState extends State<OrderPage> with SingleTickerProviderStateMix
       children: [
         Text("1"),
         ActiveOrderCashOnDelivery(),
+        // ActiveOrder(),
         Text("3"),
       ],
     );
   }
 
   getTabHeader(String field) {
-    return Text(field, style: TextStyle(color: blueColor,fontWeight: FontWeight.bold,fontSize: 12.5),);
+    return Text(field, style: TextStyle(color: Colors.black,fontWeight: FontWeight.bold,fontSize: 12.5),);
   }
 
   getName() async {

@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:delilo/LoginScreen/login.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -347,16 +348,12 @@ class _BankRegistrationScreenState extends State<BankRegistrationScreen> {
           MaterialButton(
             shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(35.0)),
-            onPressed: () async {
-              await verifyPhone("+91" + mobileController.text);
-              if (canRegister == true) {
-                // Navigator.push(context,MaterialPageRoute(builder: (context) => Details()));
-              }
+            onPressed: () {
+              Navigator.push(context, new MaterialPageRoute(builder: (context) => LoginPage()));
             },
             minWidth: MediaQuery.of(context).size.width / 1.35,
             color: greenColor,
-            child: Text("Request",
-                style: TextStyle(color: Colors.white, fontSize: height * 0.04)),
+            child: Text("Request",style: TextStyle(color: Colors.white, fontSize: height * 0.04)),
             height: height * 0.08,
           ),
           /* Padding(
@@ -402,66 +399,7 @@ class _BankRegistrationScreenState extends State<BankRegistrationScreen> {
     );
   }
 
-  Future<void> verifyPhone(phoneNo) async {
-    final PhoneVerificationCompleted verified =
-        (AuthCredential authResult) async {
-      // AuthService().signIn(authResult);
-      FirebaseAuth.instance.signInWithCredential(authResult).then((user) async {
-        if (emailController != null &&
-            mobileController != null &&
-            nameController != null &&
-            passwordController != null) {
-          canRegister = true;
-        }
-        await FirebaseAuth.instance.currentUser();
-        await Firestore.instance
-            .collection('users')
-            .document(user.user.uid)
-            .setData({
-          "email": emailController.text,
-          "password": passwordController.text,
-          "phone": mobileController.text,
-          "username": nameController.text,
-        });
-      });
-      setState(() async {
-        this.verified = true;
-        this.loginKey = authResult;
-        otpController.text = smsCode;
-      });
-    };
 
-    final PhoneVerificationFailed verificationfailed =
-        (AuthException authException) {
-      print('${authException.message}');
-
-      if (registered)
-        key.currentState.showSnackBar(SnackBar(
-          content: new Text('Already Registered please try Login'),
-        ));
-
-      registered = false;
-    };
-
-    final PhoneCodeSent smsSent = (String verId, [int forceResend]) {
-      this.verificationId = verId;
-      setState(() {
-        this.codeSent = true;
-      });
-    };
-
-    final PhoneCodeAutoRetrievalTimeout autoTimeout = (String verId) {
-      this.verificationId = verId;
-    };
-
-    await FirebaseAuth.instance.verifyPhoneNumber(
-        phoneNumber: phoneNo,
-        timeout: const Duration(seconds: 60),
-        verificationCompleted: verified,
-        verificationFailed: verificationfailed,
-        codeSent: smsSent,
-        codeAutoRetrievalTimeout: autoTimeout);
-  }
 }
 
 // ignore: camel_case_types

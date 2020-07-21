@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../colors.dart';
-import '../colors.dart';
-import '../colors.dart';
+
 
 class Payout extends StatefulWidget {
   @override
@@ -23,48 +22,27 @@ class _PayoutState extends State<Payout> {
     return Column(
       mainAxisAlignment: MainAxisAlignment.start,
       children: [
-        Row(children: [
-          Text("1", style: TextStyle(fontWeight: FontWeight.bold))
-        ]),
+        
         Padding(
           padding: EdgeInsets.only(top: y * 0.026),
         ),
         Padding(
             padding: EdgeInsets.only(left: x * 0.0875, bottom: y * 0.013),
             child: Row(children: [blueText('Payout', y * 0.033)],)),
-        Padding(
-            padding: EdgeInsets.only(left: x * 0.12 , bottom: y * 0.013),
-            child: Row(
-              children: [
-                Text(
-                  'Balance Rs. 4000',
-                  style: TextStyle(
-                    fontSize: y*0.019,
-                    color: blueColor,
-                  ),
-                )
-              ],
-            )),
-        Padding(
-          padding: EdgeInsets.only(left: x * 0.25),
-          child:  Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              FlatButton(
-                onPressed: () {},
-                color: blueColor,
-                child: Text('Pay now',
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontSize: y*0.02
-                    )),
-                shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12)),
-              ),
-            ],
-          ),
-        ),
+        // Padding(
+        //     padding: EdgeInsets.only(left: x * 0.12 , bottom: y * 0.013),
+        //     child: Row(
+        //       children: [
+        //         Text(
+        //           'Balance Rs. 4000',
+        //           style: TextStyle(
+        //             fontSize: y*0.019,
+        //             color: greenColor,
+        //           ),
+        //         )
+        //       ],
+        //     )),
+        
 
         Padding(
           padding: const EdgeInsets.only(top: 5.0),
@@ -81,21 +59,20 @@ class _PayoutState extends State<Payout> {
               child: Column(
                 children: [
                   Padding(padding: EdgeInsets.symmetric(vertical: y * 0.013, horizontal: x * 0.025)),
-                  Row(
-                    children: [
-                      Padding(
-                        padding: EdgeInsets.only(left: x * 0.0375,bottom: y * 0.013),
-                        child: blueText('History'),
-                      )
-                    ],
-                  ),
+
+                  Container(
+                      height: 60.0,
+                      width: 60.0,
+                      child: Image.asset('assets/1.png',)
+                    ),
+                  Padding(padding: EdgeInsets.all(12.0), child: blueText('History', 19.5),),
                   Padding(
-                    padding: EdgeInsets.symmetric(vertical: y * 0.0108, horizontal: x * 0.0203),
+                    padding: const EdgeInsets.only(right: 2.0),
                     child: Center(child: Text('You Recieved Rs. 4000 COD for order #10711',
                       style: TextStyle(fontSize: y*0.017),)),
                   ),
                   Padding(
-                    padding: EdgeInsets.symmetric(vertical: y * 0.0108, horizontal: x * 0.0203),
+                    padding: const EdgeInsets.all(8.0),
                     child: Center(child: Text('You Recieved Rs. 1100 COD for order #10006',
                       style: TextStyle(
                           fontSize: y*0.017
@@ -114,7 +91,7 @@ class _PayoutState extends State<Payout> {
     return new Text(
       txt,
       style: new TextStyle(
-          color: blueColor,
+          color: greenColor,
           fontSize: size,
           fontWeight: FontWeight.bold,
           letterSpacing: 0.8),

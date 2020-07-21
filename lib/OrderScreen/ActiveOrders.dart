@@ -189,7 +189,7 @@ class _ActiveOrderState extends State<ActiveOrder> {
       ),
       Positioned(
         top: MediaQuery.of(context).size.height / 1.8,
-        left: MediaQuery.of(context).size.width / 6,
+        left: MediaQuery.of(context).size.width / 4,
         child: GestureDetector(
           onTap: () {
             // showDialog(context: context, builder: (context) => showStatus(context));
@@ -199,7 +199,7 @@ class _ActiveOrderState extends State<ActiveOrder> {
             height: 50.0,
             width: MediaQuery.of(context).size.width / 2,
             decoration: BoxDecoration(
-              color: blueColor,
+              color: greenColor,
               borderRadius: BorderRadius.circular(12.0),
             ),
             child: Center(
