@@ -14,6 +14,8 @@ class LoginPage extends StatefulWidget {
 }
 
 class _LoginPageState extends State<LoginPage> {
+
+  bool loading = false;
   bool checkBox = false;
   String phoneNo, verificationId, smsCode;
   bool codeSent = false;
@@ -161,6 +163,7 @@ class _LoginPageState extends State<LoginPage> {
                     width: 1.8,
                   ),
                 ),
+                
                 enabledBorder: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(25.0),
                   borderSide: BorderSide(
@@ -168,6 +171,7 @@ class _LoginPageState extends State<LoginPage> {
                     width: 1.8,
                   ),
                 ),
+                
                 hintText: 'Enter Your Password',
                 hintStyle: TextStyle(
                     fontSize: height*0.02
@@ -175,6 +179,7 @@ class _LoginPageState extends State<LoginPage> {
                 fillColor: Colors.white,
                 filled: true,
               ),
+              obscureText: true,
               controller: passwordController,
               validator: (val) => val.length < 6
                   ? 'Enter a valid minimum 6 chars long password'
@@ -187,15 +192,18 @@ class _LoginPageState extends State<LoginPage> {
           MaterialButton(
             shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(25.0)),
-                onPressed: () => Navigator.push(context, new MaterialPageRoute(builder: (context) => HomeScreen())),
+                onPressed: () {
+                  setState(() {
+                    loading = true;
+                  });
+                  getLoggedIn();
+                  
+                },
            
             minWidth: MediaQuery.of(context).size.width / 1.35,
             color: Colors.green,
-            child: Text("Login",
-              style: TextStyle(
-                  fontSize: height*0.02,
-                color: Colors.white
-              ),),
+            child: loading ? CircularProgressIndicator() : 
+                            Text("Login",style: TextStyle(fontSize: height*0.02,color: Colors.white),),
             height: height*0.08,
           ),
           SizedBox(
@@ -205,6 +213,25 @@ class _LoginPageState extends State<LoginPage> {
         ],
       ),
     );
+  }
+
+
+  getLoggedIn() async {
+    await Firestore.instance.collection('users').getDocuments().then((value) {
+      value.documents.forEach((element) { 
+        if(element.data['id'] == idController.text){
+          if(element.data['password'] == passwordController.text){
+            loading = false;
+            Navigator.push(context, new MaterialPageRoute(builder: (context) => HomeScreen()));
+          }else{
+            key.currentState.showSnackBar(SnackBar(content: Text('Incorrect Password :)')));
+          }
+        }
+      });
+    }).then((value) {
+      setState(() => loading = false);
+      return key.currentState.showSnackBar(SnackBar(content: Text('No Corresponding ID found :)'), duration: Duration(seconds: 3),));
+    });
   }
 
   getRegisterRow() {

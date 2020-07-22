@@ -1,6 +1,4 @@
-import 'dart:async';
 import 'dart:io';
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:delilo/LoginScreen/login.dart';
 import 'package:file_picker/file_picker.dart';
@@ -8,7 +6,6 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:pin_code_fields/pin_code_fields.dart';
 
 
 import '../colors.dart';
@@ -18,6 +15,7 @@ import 'registration.dart';
 String otp;
 
 class BankRegistrationScreen extends StatefulWidget {
+  
   @override
   _BankRegistrationScreenState createState() => _BankRegistrationScreenState();
 }
@@ -27,10 +25,10 @@ class _BankRegistrationScreenState extends State<BankRegistrationScreen> {
   final accountNameController = new TextEditingController();
   final ifscController = new TextEditingController();
   
-
+  List<File> files = new List<File>();
   
 
-  
+  bool uploading = false;  
   bool privacyCheck = false;
   bool drinkingCheck = false;
   bool canRegister = false;
@@ -186,8 +184,11 @@ class _BankRegistrationScreenState extends State<BankRegistrationScreen> {
           Padding(
             padding: const EdgeInsets.all(10),
             child: GestureDetector(
-              onTap: ()  {
-                driving_licence = uploadDoc('driving_licence');
+              onTap: ()  async {
+
+                  File file = await FilePicker.getFile();
+                  files.add(file);
+                // driving_licence = uploadDoc('driving_licence');
               },
               child: Container(
                   width: MediaQuery.of(context).size.width * 0.8,
@@ -215,7 +216,12 @@ class _BankRegistrationScreenState extends State<BankRegistrationScreen> {
                           icon: Image.asset('assets/sh.png', color: Colors.grey),
                           iconSize: height * 0.12,
                           
-                          onPressed: null),
+                          onPressed: () async {
+                            File file = await FilePicker.getFile();
+                            files.add(file);
+                            
+                            print(files[0].path + ' *************************************8');
+                          }),
                     ],
                   )),
             ),
@@ -232,8 +238,10 @@ class _BankRegistrationScreenState extends State<BankRegistrationScreen> {
           Padding(
             padding: const EdgeInsets.all(10),
             child: GestureDetector(
-              onTap: () {
-                pan_card =  uploadDoc('pan_card');
+              onTap: () async  {
+                  File file = await FilePicker.getFile();
+              files.add(file);
+                // pan_card =  uploadDoc('pan_card');
               },
               child: Container(
                   width: MediaQuery.of(context).size.width * 0.8,
@@ -278,8 +286,10 @@ class _BankRegistrationScreenState extends State<BankRegistrationScreen> {
           Padding(
             padding: const EdgeInsets.all(10),
             child: GestureDetector(
-              onTap: () {
-                passport = uploadDoc('passport_photo');
+              onTap: () async {
+                    File file = await FilePicker.getFile();
+                    files.add(file);
+                // passport = uploadDoc('passport_photo');
               } ,
               child: Container(
                   width: MediaQuery.of(context).size.width * 0.8,
@@ -307,7 +317,10 @@ class _BankRegistrationScreenState extends State<BankRegistrationScreen> {
                           icon: Image.asset('assets/sh.png', color: Colors.grey),
                           iconSize: height * 0.12,
                           
-                          onPressed: null),
+                          onPressed: () async {
+                                          File file = await FilePicker.getFile();
+                      files.add(file);
+                          }),
                     ],
                   )),
             ),
@@ -350,6 +363,8 @@ class _BankRegistrationScreenState extends State<BankRegistrationScreen> {
                 borderRadius: BorderRadius.circular(35.0)),
             onPressed: () async {
               // print(user.uid + ' ********************************************');
+              setState(() => uploading = true);
+              await uploadFiles();
               try{
                 await Firestore.instance.collection('users').document(user.uid).updateData({
                 'account_name': accountNameController.text,
@@ -366,7 +381,9 @@ class _BankRegistrationScreenState extends State<BankRegistrationScreen> {
             },
             minWidth: MediaQuery.of(context).size.width / 1.35,
             color: greenColor,
-            child: Text("Request",style: TextStyle(color: Colors.white, fontSize: height * 0.04)),
+            child: uploading ? Text("Uploading files please wait",style: TextStyle(color: Colors.white, fontSize: height * 0.015))
+              :
+              Text("Request",style: TextStyle(color: Colors.white, fontSize: height * 0.04)),
             height: height * 0.08,
           ),
    
@@ -379,17 +396,36 @@ class _BankRegistrationScreenState extends State<BankRegistrationScreen> {
       ),
     );
   }
-  uploadDoc(service) async {
+  uploadFiles() async {
+    int i=0;
     
-    File file = await FilePicker.getFile();
+    while(i<=files.length) {
+      if(i == 0){
+        driving_licence = await uploadUtil('driving_licence', files[0]);
+        i++;
+      }else if(i == 1) {
+        pan_card = await uploadUtil('pan_card', files[1]);
+        i++;
+      }else if(i == 2){
+        passport = await uploadUtil('photo', files[2]);
+        i++;
+      }else{
+        setState(() => uploading = false);
+        i++;
+      }
+        
+    }
+ 
     
-    StorageReference storageReference = FirebaseStorage.instance.ref().child(service).child(user.uid);
-    StorageUploadTask uploadTask = storageReference.putFile(file);
-    await uploadTask.onComplete;
-    return await storageReference.getDownloadURL();
-    // url = await storageReference.getDownloadURL();
-    // print('File Uploaded !' + url);
     
+  }
+
+  uploadUtil(service, file) async {
+     StorageReference storageReference = FirebaseStorage.instance.ref().child(service).child(user.uid);
+          StorageUploadTask uploadTask = storageReference.putFile(file);
+          await uploadTask.onComplete;
+          return await storageReference.getDownloadURL();
+          // url = await storageReference.getDownloadURL();
   }
 
 }

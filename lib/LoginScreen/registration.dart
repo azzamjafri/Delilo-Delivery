@@ -441,6 +441,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
               'address': addressController.text,
               "id_proof": url,
               "id": mobileController.text,
+              'password': 'test1234',
          });
       });
       setState(() async {
